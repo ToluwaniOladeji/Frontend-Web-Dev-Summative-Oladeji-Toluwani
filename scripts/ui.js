@@ -301,28 +301,28 @@ function clearAllFieldErrors() {
  */
 function initSettings() {
     const saveRatesBtn = document.getElementById('save-rates-btn');
-    const eurRateInput = document.getElementById('eur-rate');
-    const gbpRateInput = document.getElementById('gbp-rate');
+    const usdRateInput = document.getElementById('usd-rate');
+    const rwfRateInput = document.getElementById('rwf-rate');
     const exportBtn = document.getElementById('export-json-btn');
     const importFile = document.getElementById('import-file');
     const clearDataBtn = document.getElementById('clear-data-btn');
     
     // Load current rates
     const settings = state.getSettings();
-    eurRateInput.value = settings.eurRate || 1.09;
-    gbpRateInput.value = settings.gbpRate || 1.27;
-    
+    usdRateInput.value = settings.usdRate || 1.09;
+    rwfRateInput.value = settings.rwfRate || 1.27;
+
     // Save rates
     saveRatesBtn.addEventListener('click', () => {
-        const eurRate = parseFloat(eurRateInput.value);
-        const gbpRate = parseFloat(gbpRateInput.value);
+        const usdRate = parseFloat(usdRateInput.value);
+        const rwfRate = parseFloat(rwfRateInput.value);
         
-        if (isNaN(eurRate) || isNaN(gbpRate) || eurRate <= 0 || gbpRate <= 0) {
+        if (isNaN(usdRate) || isNaN(rwfRate) || usdRate <= 0 || rwfRate <= 0) {
             showStatus('rates-status', 'Please enter valid rates', 'error', 'assertive');
             return;
         }
         
-        state.updateSettings({ eurRate, gbpRate });
+        state.updateSettings({ usdRate, rwfRate });
         showStatus('rates-status', 'Rates saved successfully!', 'success', 'polite');
     });
     
@@ -429,9 +429,9 @@ function renderDashboard(currentState) {
     
     // Update stats
     document.getElementById('stat-total').textContent = stats.total;
-    document.getElementById('stat-spent').textContent = `$${stats.totalSpent.toFixed(2)}`;
+    document.getElementById('stat-spent').textContent = `N${stats.totalSpent.toFixed(2)}`;
     document.getElementById('stat-category').textContent = stats.topCategory;
-    document.getElementById('stat-week').textContent = `$${stats.last7Days.toFixed(2)}`;
+    document.getElementById('stat-week').textContent = `N${stats.last7Days.toFixed(2)}`;
     
     // Update budget cap status
     const capStatus = document.getElementById('cap-status');
@@ -441,11 +441,11 @@ function renderDashboard(currentState) {
         const remaining = budgetCap - stats.totalSpent;
         
         if (remaining >= 0) {
-            capStatus.textContent = `Budget: $${stats.totalSpent.toFixed(2)} / $${budgetCap.toFixed(2)} - Remaining: $${remaining.toFixed(2)}`;
+            capStatus.textContent = `Budget: N${stats.totalSpent.toFixed(2)} / $${budgetCap.toFixed(2)} - Remaining: N${remaining.toFixed(2)}`;
             capStatus.className = 'cap-status under-budget';
             capStatus.setAttribute('aria-live', 'polite');
         } else {
-            capStatus.textContent = `Budget exceeded! Spent: $${stats.totalSpent.toFixed(2)} / Cap: $${budgetCap.toFixed(2)} - Over by: $${Math.abs(remaining).toFixed(2)}`;
+            capStatus.textContent = `Budget exceeded! Spent: N${stats.totalSpent.toFixed(2)} / Cap: N${budgetCap.toFixed(2)} - Over by: $${Math.abs(remaining).toFixed(2)}`;
             capStatus.className = 'cap-status over-budget';
             capStatus.setAttribute('aria-live', 'assertive');
         }
