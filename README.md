@@ -138,7 +138,7 @@ Each transaction record includes:
 
 **Student Finance App Team**
 
-- GitHub: [github.com/ToluwaniOladeji]
+- GitHub: github.com/ToluwaniOladeji
 - Email: t.oladeji@alustudent.com
 
 ---
