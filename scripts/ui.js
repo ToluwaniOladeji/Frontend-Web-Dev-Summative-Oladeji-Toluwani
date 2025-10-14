@@ -473,7 +473,7 @@ function renderCategoryChart(breakdown) {
         <div class="chart-bar">
             <div class="chart-bar-label">
                 <span>${item.category}</span>
-                <span>$${item.amount.toFixed(2)} (${item.percentage.toFixed(1)}%)</span>
+                <span>N${item.amount.toFixed(2)} (${item.percentage.toFixed(1)}%)</span>
             </div>
             <div class="chart-bar-bg">
                 <div class="chart-bar-fill" style="width: ${item.percentage}%"></div>
@@ -525,7 +525,7 @@ function renderTable(transactions, searchRegex) {
         <tr>
             <td>${search.highlight(t.date, searchRegex)}</td>
             <td>${search.highlight(t.description, searchRegex)}</td>
-            <td>$${search.highlight(t.amount.toFixed(2), searchRegex)}</td>
+            <td>N${search.highlight(t.amount.toFixed(2), searchRegex)}</td>
             <td>${search.highlight(t.category, searchRegex)}</td>
             <td>
                 <button class="btn btn-small btn-secondary" onclick="window.editTransaction('${t.id}')">Edit</button>
