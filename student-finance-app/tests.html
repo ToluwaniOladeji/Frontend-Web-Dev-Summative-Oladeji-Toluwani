@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Validation Tests - Student Finance Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f8fafc;
+        }
+        h1 {
+            color: #2563eb;
+        }
+        .test-section {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-left: 4px solid #64748b;
+            border-radius: 0.25rem;
+        }
+        .test-case.pass {
+            border-left-color: #16a34a;
+            background: #dcfce7;
+        }
+        .test-case.fail {
+            border-left-color: #dc2626;
+            background: #fee2e2;
+        }
+        .test-input {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .test-result {
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+        .pattern {
+            font-family: monospace;
+            background: #fef08a;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        #summary {
+            background: #2563eb;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .stat {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <h1>Regex Validation Tests</h1>
+    
+    <div id="summary">
+        <h2>Test Summary</h2>
+        <div class="stats">
+            <div>Total: <span class="stat" id="total-tests">0</span></div>
+            <div>Passed: <span class="stat" id="passed-tests">0</span></div>
+            <div>Failed: <span class="stat" id="failed-tests">0</span></div>
+        </div>
+    </div>
+    
+    <div id="test-results"></div>
+    
+    <script type="module">
+        import * as validators from './scripts/validators.js';
+        
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+        
+        const resultsContainer = document.getElementById('test-results');
+        
+        function createTestSection(title) {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = `<h2>${title}</h2>`;
+            resultsContainer.appendChild(section);
+            return section;
+        }
+        
+        function runTest(section, testName, input, expectedValid, validatorFn) {
+            totalTests++;
+            
+            const result = validatorFn(input);
+            const passed = result.valid === expectedValid;
+            
+            if (passed) {
+                passedTests++;
+            } else {
+                failedTests++;
+            }
+            
+            const testCase = document.createElement('div');
+            testCase.className = `test-case ${passed ? 'pass' : 'fail'}`;
+            testCase.innerHTML = `
+                <div><strong>${testName}</strong></div>
+                <div>Input: <span class="test-input">${input || '(empty)'}</span></div>
+                <div>Expected: ${expectedValid ? 'Valid' : 'Invalid'}</div>
+                <div class="test-result">${passed ? '✓ PASS' : '✗ FAIL'}</div>
+                ${!result.valid ? `<div>Error: ${result.message}</div>` : ''}
+            `;
+            section.appendChild(testCase);
+        }
+        
+        function runPatternTest(section, testName, pattern, input, shouldMatch) {
+            totalTests++;
+            
+            const regex = new RegExp(pattern);
+            const matches = regex.test(input);
+            const passed = matches === shouldMatch;
+            
+            if (passed) {
+                passedTests++;
+            } else {
+                failedTests++;
+            }
+            
+            const testCase = document.createElement('div');
+            testCase.className = `test-case ${passed ? 'pass' : 'fail'}`;
+            testCase.innerHTML = `
+                <div><strong>${testName}</strong></div>
+                <div>Pattern: <span class="pattern">${pattern}</span></div>
+                <div>Input: <span class="test-input">${input}</span></div>
+                <div>Expected: ${shouldMatch ? 'Match' : 'No Match'}</div>
+                <div class="test-result">${passed ? '✓ PASS' : '✗ FAIL'}</div>
+            `;
+            section.appendChild(testCase);
+        }
+        
+        // Description Tests
+        const descSection = createTestSection('Description Validation');
+        runTest(descSection, 'Valid description', 'Lunch at cafeteria', true, validators.validateDescription);
+        runTest(descSection, 'Leading space', ' Lunch', false, validators.validateDescription);
+        runTest(descSection, 'Trailing space', 'Lunch ', false, validators.validateDescription);
+        runTest(descSection, 'Double spaces', 'Lunch  at  cafeteria', false, validators.validateDescription);
+        runTest(descSection, 'Duplicate words', 'Lunch lunch at cafeteria', false, validators.validateDescription);
+        runTest(descSection, 'Too short', 'Hi', false, validators.validateDescription);
+        runTest(descSection, 'Empty string', '', false, validators.validateDescription);
+        
+        // Amount Tests
+        const amountSection = createTestSection('Amount Validation');
+        runTest(amountSection, 'Valid integer', '100', true, validators.validateAmount);
+        runTest(amountSection, 'Valid decimal', '12.50', true, validators.validateAmount);
+        runTest(amountSection, 'Valid single decimal', '9.5', true, validators.validateAmount);
+        runTest(amountSection, 'Zero', '0', false, validators.validateAmount);
+        runTest(amountSection, 'Negative', '-10', false, validators.validateAmount);
+        runTest(amountSection, 'Too many decimals', '12.505', false, validators.validateAmount);
+        runTest(amountSection, 'Leading zero', '01.50', false, validators.validateAmount);
+        runTest(amountSection, 'Empty string', '', false, validators.validateAmount);
+        
+        // Date Tests
+        const dateSection = createTestSection('Date Validation');
+        runTest(dateSection, 'Valid date', '2025-09-25', true, validators.validateDate);
+        runTest(dateSection, 'Valid date (Oct)', '2025-10-12', true, validators.validateDate);
+        runTest(dateSection, 'Invalid format', '25-09-2025', false, validators.validateDate);
+        runTest(dateSection, 'Invalid month', '2025-13-01', false, validators.validateDate);
+        runTest(dateSection, 'Invalid day', '2025-09-32', false, validators.validateDate);
+        runTest(dateSection, 'Future date', '2026-01-01', false, validators.validateDate);
+        runTest(dateSection, 'Empty string', '', false, validators.validateDate);
+        
+        // Advanced Regex Pattern Tests
+        const patternSection = createTestSection('Advanced Regex Patterns');
+        
+        // Duplicate words pattern
+        runPatternTest(patternSection, 'Duplicate words - match', validators.patterns.duplicateWords, 'the the', true);
+        runPatternTest(patternSection, 'Duplicate words - no match', validators.patterns.duplicateWords, 'the cat', false);
+        
+        // Has cents pattern
+        runPatternTest(patternSection, 'Has cents - match', validators.patterns.hasCents, '12.50', true);
+        runPatternTest(patternSection, 'Has cents - no match', validators.patterns.hasCents, '12', false);
+        runPatternTest(patternSection, 'Has cents - one decimal', validators.patterns.hasCents, '12.5', false);
+        
+        // Beverage pattern
+        runPatternTest(patternSection, 'Beverage - coffee', validators.patterns.beverage, 'Morning coffee', true);
+        runPatternTest(patternSection, 'Beverage - tea', validators.patterns.beverage, 'Green tea', true);
+        runPatternTest(patternSection, 'Beverage - juice', validators.patterns.beverage, 'Orange juice', true);
+        runPatternTest(patternSection, 'Beverage - no match', validators.patterns.beverage, 'Lunch', false);
+        
+        // Description pattern (no leading/trailing spaces)
+        runPatternTest(patternSection, 'Description - valid', validators.patterns.description, 'Valid text', true);
+        runPatternTest(patternSection, 'Description - leading space', validators.patterns.description, ' Invalid', false);
+        runPatternTest(patternSection, 'Description - trailing space', validators.patterns.description, 'Invalid ', false);
+        
+        // Amount pattern
+        runPatternTest(patternSection, 'Amount - valid integer', validators.patterns.amount, '100', true);
+        runPatternTest(patternSection, 'Amount - valid decimal', validators.patterns.amount, '12.50', true);
+        runPatternTest(patternSection, 'Amount - leading zero', validators.patterns.amount, '01', false);
+        runPatternTest(patternSection, 'Amount - three decimals', validators.patterns.amount, '12.505', false);
+        
+        // Date pattern
+        runPatternTest(patternSection, 'Date - valid', validators.patterns.date, '2025-09-25', true);
+        runPatternTest(patternSection, 'Date - invalid format', validators.patterns.date, '25/09/2025', false);
+        runPatternTest(patternSection, 'Date - invalid month', validators.patterns.date, '2025-13-01', false);
+        
+        // Update summary
+        document.getElementById('total-tests').textContent = totalTests;
+        document.getElementById('passed-tests').textContent = passedTests;
+        document.getElementById('failed-tests').textContent = failedTests;
+        
+        console.log(`Tests completed: ${passedTests}/${totalTests} passed`);
+    </script>
+</body>
+</html>
+
