@@ -441,11 +441,11 @@ function renderDashboard(currentState) {
         const remaining = budgetCap - stats.totalSpent;
         
         if (remaining >= 0) {
-            capStatus.textContent = `Budget: N${stats.totalSpent.toFixed(2)} / $${budgetCap.toFixed(2)} - Remaining: N${remaining.toFixed(2)}`;
+            capStatus.textContent = `Budget: N${stats.totalSpent.toFixed(2)} / N${budgetCap.toFixed(2)} - Remaining: N${remaining.toFixed(2)}`;
             capStatus.className = 'cap-status under-budget';
             capStatus.setAttribute('aria-live', 'polite');
         } else {
-            capStatus.textContent = `Budget exceeded! Spent: N${stats.totalSpent.toFixed(2)} / Cap: N${budgetCap.toFixed(2)} - Over by: $${Math.abs(remaining).toFixed(2)}`;
+            capStatus.textContent = `Budget exceeded! Spent: N${stats.totalSpent.toFixed(2)} / Cap: N${budgetCap.toFixed(2)} - Over by: N${Math.abs(remaining).toFixed(2)}`;
             capStatus.className = 'cap-status over-budget';
             capStatus.setAttribute('aria-live', 'assertive');
         }
