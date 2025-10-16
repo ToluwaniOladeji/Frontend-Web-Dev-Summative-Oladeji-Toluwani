@@ -162,6 +162,12 @@ student-finance-app/
 
 ---
 
+## 🎥 Demo Video
+
+Watch a short walkthrough demonstrating the app’s navigation, keyboard flow, regex edge cases, import/export functionality, and responsive design.
+
+🔗 **Demo Video Link:** https://youtu.be/4HnRxgu5kYw?si=uE--7-KX13iHXpWr
+
 ## 🧠 Data Model
 
 Each transaction record includes:
